@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright (c) 2015 Intel Corporation
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE suppressions PUBLIC
+        "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+        "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+
+<suppressions>
+    <!-- ClassFanOutComplexity, think twice! -->
+    <suppress checks="ClassFanOutComplexity" files="BaseResource.java"/>
+    <suppress checks="ClassFanOutComplexity" files="Blade.java"/>
+    <suppress checks="ClassFanOutComplexity" files="BladeJson.java"/>
+    <suppress checks="ClassFanOutComplexity" files="BladeResource.java"/>
+    <suppress checks="ClassFanOutComplexity" files="BladeDto.java"/>
+    <suppress checks="ClassFanOutComplexity" files="ComposedNode.java"/>
+    <suppress checks="ClassFanOutComplexity" files="ComposedNodeCollectionResource.java"/>
+    <suppress checks="ClassFanOutComplexity" files="ComposedNodeReader.java"/>
+    <suppress checks="ClassFanOutComplexity" files="ComposedNodeServiceImpl.java"/>
+    <suppress checks="ClassFanOutComplexity" files="Contexts.java"/>
+    <suppress checks="ClassFanOutComplexity" files="DomainObjectGraphMapper.java"/>
+    <suppress checks="ClassFanOutComplexity" files="JsonProvider.java"/>
+    <suppress checks="ClassFanOutComplexity" files="Manager.java"/>
+    <suppress checks="ClassFanOutComplexity" files="ManagerServiceImpl.java"/>
+    <suppress checks="ClassFanOutComplexity" files="NetworkInterface.java"/>
+    <suppress checks="ClassFanOutComplexity" files="NetworkInterfaceMapper.java"/>
+    <suppress checks="ClassFanOutComplexity" files="NodeComposer.java"/>
+    <suppress checks="ClassFanOutComplexity" files="ProcessorDto.java"/>
+    <suppress checks="ClassFanOutComplexity" files="PsmeBladeImpl.java"/>
+    <suppress checks="ClassFanOutComplexity" files="PsmeComputeModuleImpl.java"/>
+    <suppress checks="ClassFanOutComplexity" files="PsmeDrawerImpl.java"/>
+    <suppress checks="ClassFanOutComplexity" files="PsmeManagerImpl.java"/>
+    <suppress checks="ClassFanOutComplexity" files="PsmeSwitchPortImpl.java"/>
+    <suppress checks="ClassFanOutComplexity" files="RestGraphTraverser.java"/>
+    <suppress checks="ClassFanOutComplexity" files="ResourceLinksImpl.java"/>
+    <suppress checks="ClassFanOutComplexity" files="RemoteTargetSupplier.java"/>
+    <suppress checks="ClassFanOutComplexity" files="RequestFactoryImpl.java"/>
+    <suppress checks="ClassFanOutComplexity" files="RssActionsImpl.java"/>
+    <suppress checks="ClassFanOutComplexity" files="SwitchPortDto.java"/>
+    <suppress checks="ClassFanOutComplexity" files="RemoteTargetCreationDelegate.java"/>
+    <suppress checks="ClassFanOutComplexity" files="RemoteTargetCreationHandler.java"/>
+    <suppress checks="ClassFanOutComplexity" files="TargetRequestHelper.java"/>
+    <suppress checks="ClassFanOutComplexity" files="UrlValidationFilter.java"/>
+
+
+    <!-- DomainObjects and DTO's with builder are treated more leniently -->
+    <suppress checks="MethodCount" files="AssetCollectionHelper.java"/>
+    <suppress checks="MethodCount" files="Blade.java"/>
+    <suppress checks="MethodCount" files="BladeDto.java"/>
+    <suppress checks="MethodCount" files="ComputeModule.java"/>
+    <suppress checks="MethodCount" files="ComputeModuleDto.java"/>
+    <suppress checks="MethodCount" files="ComposedNode.java"/>
+    <suppress checks="MethodCount" files="ComposedNodeDto.java"/>
+    <suppress checks="MethodCount" files="ComposedNodeDtoImpl.java"/>
+    <suppress checks="MethodCount" files="ComposedNodeTemplateImpl.java"/>
+    <suppress checks="MethodCount" files="Contexts.java"/>
+    <suppress checks="MethodCount" files="DomainObject.java"/>
+    <suppress checks="MethodCount" files="Drawer.java"/>
+    <suppress checks="MethodCount" files="DrawerDto.java"/>
+    <suppress checks="MethodCount" files="Drive.java"/>
+    <suppress checks="MethodCount" files="DriveDto.java"/>
+    <suppress checks="MethodCount" files="Manager.java"/>
+    <suppress checks="MethodCount" files="ManagerDto.java"/>
+    <suppress checks="MethodCount" files="Memory.java"/>
+    <suppress checks="MethodCount" files="MemoryDto.java"/>
+    <suppress checks="MethodCount" files="NetworkInterface.java"/>
+    <suppress checks="MethodCount" files="NetworkInterfaceDto.java"/>
+    <suppress checks="MethodCount" files="NetworkService.java"/>
+    <suppress checks="MethodCount" files="NetworkServiceDto.java"/>
+    <suppress checks="MethodCount" files="Pod.java"/>
+    <suppress checks="MethodCount" files="Processor.java"/>
+    <suppress checks="MethodCount" files="ProcessorDto.java"/>
+    <suppress checks="MethodCount" files="PsmeBlade.java"/>
+    <suppress checks="MethodCount" files="PsmeBladeImpl.java"/>
+    <suppress checks="MethodCount" files="PsmeMemoryImpl.java"/>
+    <suppress checks="MethodCount" files="RsaNetworkInterfaceImpl.java"/>
+    <suppress checks="MethodCount" files="RsaNetworkServiceImpl.java"/>
+    <suppress checks="MethodCount" files="PsmeProcessorImpl.java"/>
+    <suppress checks="MethodCount" files="RssLogicalDriveImpl.java"/>
+    <suppress checks="MethodCount" files="RemoteTarget.java"/>
+    <suppress checks="MethodCount" files="RemoteTargetDto.java"/>
+    <suppress checks="MethodCount" files="StorageService.java"/>
+    <suppress checks="MethodCount" files="SwitchPort.java"/>
+    <suppress checks="MethodCount" files="SwitchPortDto.java"/>
+    <suppress checks="MethodCount" files="VlanNetworkInterfaceIpV6Address.java"/>
+    <suppress checks="MethodCount" files="RemoteTargetSupplier.java"/>
+
+    <!-- Method length - consider dividing into more logical parts -->
+    <suppress checks="MethodLength" files="BladeDto.java"/>
+    <suppress checks="MethodLength" files="BladeServiceImpl.java"/>
+    <suppress checks="MethodLength" files="IscsiSanUriTest.java"/>
+    <suppress checks="MethodLength" files="LogicalDriveServiceImpl.java"/>
+    <suppress checks="MethodLength" files="MemoryDto.java"/>
+    <suppress checks="MethodLength" files="MemoryJsonSerializer.java"/>
+    <suppress checks="MethodLength" files="MemoryServiceImpl.java"/>
+    <suppress checks="MethodLength" files="NetworkInterfaceDto.java"/>
+    <suppress checks="MethodLength" files="NetworkInterfaceDtoJsonSerializer.java"/>
+    <suppress checks="MethodLength" files="NetworkInterfaceServiceImpl.java"/>
+    <suppress checks="MethodLength" files="ProcessorServiceImpl.java"/>
+    <suppress checks="MethodLength" files="ProcessorDtoJsonSerializer.java"/>
+    <suppress checks="MethodLength" files="NodeComposerTest.java"/>
+
+    <!-- Method length - consider extracting some methods -->
+    <suppress checks="ExecutableStatementCount" files="BladeDto.java"/>
+    <suppress checks="ExecutableStatementCount" files="BladeDtoJsonSerializer.java"/>
+    <suppress checks="ExecutableStatementCount" files="LogicalDriveDto.java"/>
+    <suppress checks="ExecutableStatementCount" files="LogicalDriveDtoJsonSerializer.java"/>
+    <suppress checks="ExecutableStatementCount" files="ManagerDto.java"/>
+    <suppress checks="ExecutableStatementCount" files="MemoryDto.java"/>
+    <suppress checks="ExecutableStatementCount" files="MemoryJsonSerializer.java"/>
+    <suppress checks="ExecutableStatementCount" files="NetworkInterfaceDto.java"/>
+    <suppress checks="ExecutableStatementCount" files="NetworkInterfaceDtoJsonSerializer.java"/>
+    <suppress checks="ExecutableStatementCount" files="NetworkServiceDto.java"/>
+    <suppress checks="ExecutableStatementCount" files="ProcessorDto.java"/>
+    <suppress checks="ExecutableStatementCount" files="ProcessorDtoJsonSerializer.java"/>
+    <suppress checks="ExecutableStatementCount" files="DriveDtoJsonSerializer.java"/>
+
+    <suppress checks="ParameterNumber" files="JsonProvider.java"/>
+
+    <suppress checks="IllegalCatch" files="DiscoveryRunner.java"/>
+
+    <!-- Suppression for JSON templates in REST layer -->
+    <suppress checks="VisibilityModifier" files="json/.*Json.java$"/>
+
+    <!-- Exclude OrientDb connector sources -->
+    <suppress files="org.ops4j.orient.*" checks=".*" />
+
+    <!-- Test classes specific style configuration -->
+    <suppress checks="EmptyBlock" files="test/java"/>
+    <suppress checks="MagicNumber" files="test/java"/>
+    <suppress checks="MethodName" files="test/java"/>
+    <suppress checks="MethodCount" files="test/java"/>
+    <suppress checks="AnonInnerLength" files="test/java"/>
+    <suppress checks="MethodName" files="test/java"/>
+    <suppress checks="ClassFanOutComplexity" files="test/java"/>
+    <suppress checks="ParameterNumber" files="test/java"/>
+</suppressions>

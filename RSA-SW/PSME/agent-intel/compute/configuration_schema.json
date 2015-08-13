@@ -1,0 +1,656 @@
+{
+    "title": "PSME Compute Agent Configuration Schema",
+    "description": "Detailed description of the PSME Compute Agent configuration file.",
+    "name": "/",
+    "type": "object",
+    "properties": {
+        "agent": {
+            "description": "Container for agent specific information.",
+            "name": "agent",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "description": "Type of the agent: storage, compute, network.",
+                    "name": "type",
+                    "type": "string"
+                },
+                "vendor": {
+                    "description": "Information about agent vendor.",
+                    "name": "vendor",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "Listen port number. For example 7777.",
+                    "name": "port",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "type"
+            ]
+        },
+        "commands": {
+            "description": "Container for agent commands configuration.",
+            "name": "commands",
+            "type": "object",
+            "properties": {
+                "*": {
+                    "description": "Star covers all commands. ",
+                    "name": "*",
+                    "type": "object",
+                    "properties": {
+                        "implementation": {
+                            "description": "Type of implementation: generic or OpenIPMI.",
+                            "name": "implementation",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "implementation"
+                    ]
+                }
+            },
+            "required": [
+                "*"
+            ]
+        },
+        "server": {
+            "description": "Information for agent about access to REST server.",
+            "name": "server",
+            "type": "object",
+            "properties": {
+                "port": {
+                    "description": "Port number to register to REST server. Must be the same as configured in PSME REST Server.",
+                    "name": "port",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "port"
+            ]
+        },
+        "registration": {
+            "description": "Registration to server configuration container.",
+            "name": "registration",
+            "type": "object",
+            "properties": {
+                "ipv4": {
+                    "description": "PSME REST server IP address or hostname.",
+                    "name": "ipv4",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "PSME REST server registration port number.",
+                    "name": "port",
+                    "type": "integer"
+                },
+                "interval": {
+                    "description": "Delay between next registration try in seconds.",
+                    "name": "interval",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "ipv4",
+                "port",
+                "interval"
+            ]
+        },
+        "chassis": {
+            "description": "Configuration for general Chassis during discovery.",
+            "name": "chassis",
+            "type": "object",
+            "properties": {
+                "size": {
+                    "description": "Size of the chassis in units [U].",
+                    "name": "size",
+                    "type": "integer"
+                },
+                "locationOffset": {
+                    "description": "Location identifier offset.",
+                    "name": "locationOffset",
+                    "type": "integer"
+                },
+                "computeZones": {
+                    "description": "List of supported compute zones.",
+                    "name": "computeZones",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "description": "Compute Zone",
+                        "properties": {},
+                        "required": []
+                    }
+                }
+            },
+            "required": [
+                "size",
+                "locationOffset",
+                "computeZones"
+            ]
+        },
+        "modules": {
+            "description": "List of all modules. Each entry represents single module.",
+            "name": "modules",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "ipv4": {
+                        "description": "Internal IP address of the module.",
+                        "name": "ipv4",
+                        "type": "string"
+                    },
+                    "username": {
+                        "description": "Module's BMC username.",
+                        "name": "username",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "Module's BMC password.",
+                        "name": "password",
+                        "type": "string"
+                    },
+                    "port": {
+                        "description": "Module's BMC port number",
+                        "name": "port",
+                        "type": "integer"
+                    },
+                    "slot": {
+                        "description": "Slot number in drawer.",
+                        "name": "slot",
+                        "type": "integer"
+                    },
+                    "gpio": {
+                        "description": "GPIO configuration for module.",
+                        "name": "gpio",
+                        "type": "object",
+                        "properties": {
+                            "model": {
+                                "description": "GPIO controller model name",
+                                "name": "model",
+                                "type": "string"
+                            },
+                            "bus": {
+                                "description": "Bus number for GPIO.",
+                                "name": "bus",
+                                "type": "integer"
+                            },
+                            "address": {
+                                "description": "GPIO address",
+                                "name": "address",
+                                "type": "integer"
+                            },
+                            "bank": {
+                                "description": "GPIO pins bank. 0 for 0-7 pins 1 for 8 - 15 pins.",
+                                "name": "bank",
+                                "type": "integer"
+                            },
+                            "pins": {
+                                "description": "Which pins use for this module.",
+                                "name": "pins",
+                                "type": "array",
+                                "items": {
+                                    "type": "integer"
+                                }
+                            },
+                            "inverted": {
+                                "description": "Enable / disable inverted logic on pins INPUT/OUTPUT.",
+                                "name": "inverted",
+                                "type": "boolean"
+                            }
+                        },
+                        "required": [
+                            "model",
+                            "bus",
+                            "address",
+                            "bank",
+                            "pins",
+                            "inverted"
+                        ]
+                    },
+                    "submodules": {
+                        "description": "Configuration for each submodule. Each entry is for single submodule (host).",
+                        "name": "submodules",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "port": {
+                                    "description": "Port number used to communicate with submodule.",
+                                    "name": "port",
+                                    "type": "integer"
+                                },
+                                "slot": {
+                                    "description": "Submodule slot number.",
+                                    "name": "slot",
+                                    "type": "integer"
+                                },
+                                "networkInterfaces": {
+                                    "description": "List of network interfaces. Stubs which can be override by real data on runtime.",
+                                    "name": "networkInterfaces",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "frameSize": {
+                                                "description": "Size of the frame.",
+                                                "name": "frameSize",
+                                                "type": "integer"
+                                            },
+                                            "linkTechnology": {
+                                                "description": "Name of the link technology. Example: .",
+                                                "name": "linkTechnology",
+                                                "type": "string"
+                                            },
+                                            "speedGbps": {
+                                                "description": "Network interface speed in Gbps.",
+                                                "name": "speedGbps",
+                                                "type": "integer"
+                                            },
+                                            "autosense": {
+                                                "description": "Enable / disable autosense.",
+                                                "name": "autosense",
+                                                "type": "boolean"
+                                            },
+                                            "macAddress": {
+                                                "description": "Max address: XX:XX:XX:XX:XX:XX",
+                                                "name": "macAddress",
+                                                "type": "string"
+                                            },
+                                            "ipv4Address": {
+                                                "description": "Container for interface IP version 4.",
+                                                "name": "ipv4Address",
+                                                "type": "object",
+                                                "properties": {
+                                                    "address": {
+                                                        "description": "IP address.",
+                                                        "name": "address",
+                                                        "type": "string"
+                                                    },
+                                                    "subnetMask": {
+                                                        "description": "Subnet mask. Example: 255.255.255.0",
+                                                        "name": "subnetMask",
+                                                        "type": "string"
+                                                    },
+                                                    "addressOrigin": {
+                                                        "description": "How address was achieved. Static/DHCP./",
+                                                        "name": "addressOrigin",
+                                                        "type": "string"
+                                                    },
+                                                    "gateway": {
+                                                        "description": "IP address of the gateway.",
+                                                        "name": "gateway",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "address",
+                                                    "subnetMask",
+                                                    "addressOrigin",
+                                                    "gateway"
+                                                ]
+                                            },
+                                            "ipv6Address": {
+                                                "description": "Container for interface IP version 6.",
+                                                "name": "ipv6Address",
+                                                "type": "object",
+                                                "properties": {
+                                                    "address": {
+                                                        "description": "IP address version 6.",
+                                                        "name": "address",
+                                                        "type": "string"
+                                                    },
+                                                    "prefixLength": {
+                                                        "description": "IP address version 6 prefix.",
+                                                        "name": "prefixLength",
+                                                        "type": "integer"
+                                                    },
+                                                    "addressOrigin": {
+                                                        "description": "How address was achieved. Static/DHCP./",
+                                                        "name": "addressOrigin",
+                                                        "type": "string"
+                                                    },
+                                                    "addressState": {
+                                                        "description": "Name of the address state.",
+                                                        "name": "addressState",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "address",
+                                                    "prefixLength",
+                                                    "addressOrigin",
+                                                    "addressState"
+                                                ]
+                                            },
+                                            "neighborInfo": {
+                                                "description": "Information about network topology.",
+                                                "name": "neighborInfo",
+                                                "type": "object",
+                                                "properties": {
+                                                    "switchIdentifier": {
+                                                        "description": "UUID of the neighbour switch.",
+                                                        "name": "switchIdentifier",
+                                                        "type": "string"
+                                                    },
+                                                    "portIdentifier": {
+                                                        "description": "Port ID",
+                                                        "name": "portIdentifier",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "switchIdentifier",
+                                                    "portIdentifier"
+                                                ]
+                                            },
+                                            "vlanEnable": {
+                                                "description": "Enable/disable VLAN.",
+                                                "name": "vlanEnable",
+                                                "type": "boolean"
+                                            },
+                                            "vlanCount": {
+                                                "description": "Number of VLANs",
+                                                "name": "vlanCount",
+                                                "type": "integer"
+                                            },
+                                            "oem": {
+                                                "description": "Stubs for additonal information from OEM.",
+                                                "name": "oem",
+                                                "type": "object",
+                                                "properties": {},
+                                                "required": []
+                                            }
+                                        }
+                                    }
+                                },
+                                "storageControllers": {
+                                    "description": "List of storage controllers.",
+                                    "name": "storageControllers",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "description": "Type of the Storage Controller.",
+                                                "name": "type",
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "description": "Status health stubs.",
+                                                "name": "status",
+                                                "type": "object",
+                                                "properties": {
+                                                    "state": {
+                                                        "description": "State stub.",
+                                                        "name": "state",
+                                                        "type": "string"
+                                                    },
+                                                    "health": {
+                                                        "description": "Health stub.",
+                                                        "name": "health",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "state",
+                                                    "health"
+                                                ]
+                                            },
+                                            "interface": {
+                                                "description": "Interface name.",
+                                                "name": "interface",
+                                                "type": "string"
+                                            },
+                                            "fruInfo": {
+                                                "description": "Fru info stubs.",
+                                                "name": "fruInfo",
+                                                "type": "object",
+                                                "properties": {
+                                                    "serialNumber": {
+                                                        "description": "Serial number stub.",
+                                                        "name": "serialNumber",
+                                                        "type": "string"
+                                                    },
+                                                    "manufacturer": {
+                                                        "description": "Manufacturer name stub.",
+                                                        "name": "manufacturer",
+                                                        "type": "string"
+                                                    },
+                                                    "modelNumber": {
+                                                        "description": "Model number stub.",
+                                                        "name": "modelNumber",
+                                                        "type": "string"
+                                                    },
+                                                    "partNumber": {
+                                                        "description": "Part number stub.",
+                                                        "name": "partNumber",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "serialNumber",
+                                                    "manufacturer",
+                                                    "modelNumber",
+                                                    "partNumber"
+                                                ]
+                                            },
+                                            "driveCount": {
+                                                "description": "Number of drives.",
+                                                "name": "driveCount",
+                                                "type": "integer"
+                                            },
+                                            "drives": {
+                                                "description": "List of drives.",
+                                                "name": "drives",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "status": {
+                                                            "description": "Drive status stub.",
+                                                            "name": "status",
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "state": {
+                                                                    "description": "State stub.",
+                                                                    "name": "state",
+                                                                    "type": "string"
+                                                                },
+                                                                "health": {
+                                                                    "description": "Health stub.",
+                                                                    "name": "health",
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "state",
+                                                                "health"
+                                                            ]
+                                                        },
+                                                        "interface": {
+                                                            "description": "Drive interface name.",
+                                                            "name": "interface",
+                                                            "type": "string"
+                                                        },
+                                                        "type": {
+                                                            "description": "Drive type",
+                                                            "name": "type",
+                                                            "type": "string"
+                                                        },
+                                                        "capacityGB": {
+                                                            "description": "Drive capacity in GiB",
+                                                            "name": "capacityGB",
+                                                            "type": "integer"
+                                                        },
+                                                        "rpm": {
+                                                            "description": "Revolutions per minute schema.",
+                                                            "name": "rpm",
+                                                            "type": "integer"
+                                                        },
+                                                        "fruInfo": {
+                                                            "description": "Drive Fru Info",
+                                                            "name": "fruInfo",
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "serialNumber": {
+                                                                    "description": "Stub for serial number.",
+                                                                    "name": "serialNumber",
+                                                                    "type": "string"
+                                                                },
+                                                                "manufacturer": {
+                                                                    "description": "Stub for manufacturer name.",
+                                                                    "name": "manufacturer",
+                                                                    "type": "string"
+                                                                },
+                                                                "modelNumber": {
+                                                                    "description": "Stub for model number.",
+                                                                    "name": "modelNumber",
+                                                                    "type": "string"
+                                                                },
+                                                                "partNumber": {
+                                                                    "description": "Stub for part number.",
+                                                                    "name": "partNumber",
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "serialNumber",
+                                                                "manufacturer",
+                                                                "modelNumber",
+                                                                "partNumber"
+                                                            ]
+                                                        },
+                                                        "oem": {
+                                                            "description": "OEM specific inforamtion stub.",
+                                                            "name": "oem",
+                                                            "type": "object",
+                                                            "properties": {},
+                                                            "required": []
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "status",
+                                                        "interface",
+                                                        "type",
+                                                        "capacityGB",
+                                                        "rpm",
+                                                        "fruInfo",
+                                                        "oem"
+                                                    ]
+                                                }
+                                            },
+                                            "oem": {
+                                                "description": "OEM specific inforamtion stub.",
+                                                "name": "oem",
+                                                "type": "object",
+                                                "properties": {},
+                                                "required": []
+                                            }
+                                        },
+                                        "required": [
+                                            "status",
+                                            "interface",
+                                            "fruInfo",
+                                            "driveCount",
+                                            "drives",
+                                            "oem"
+                                        ]
+                                    }
+                                }
+                            },
+                            "required": [
+                                "port",
+                                "slot",
+                                "storageControllers"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "ipv4",
+                    "username",
+                    "password",
+                    "port",
+                    "slot",
+                    "gpio",
+                    "submodules"
+                ]
+            }
+        },
+        "logger": {
+            "description": "Logger configuration.",
+            "name": "logger",
+            "type": "object",
+            "properties": {
+                "agent": {
+                    "description": "Agent logging configuration.",
+                    "name": "agent",
+                    "type": "object",
+                    "properties": {
+                        "level": {
+                            "description": "Severity level compatible with syslog.",
+                            "name": "level",
+                            "type": "string"
+                        },
+                        "timeformat": {
+                            "description": "Timestamp format.",
+                            "name": "timeformat",
+                            "type": "string"
+                        },
+                        "color": {
+                            "description": "Enable / disable colors in log file.",
+                            "name": "color",
+                            "type": "boolean"
+                        },
+                        "output": {
+                            "description": "Enable / disable output.",
+                            "name": "output",
+                            "type": "boolean"
+                        },
+                        "tagging": {
+                            "description": "Enable / disable tagging.",
+                            "name": "tagging",
+                            "type": "boolean"
+                        },
+                        "moredebug": {
+                            "description": "Additional debug info in log file.",
+                            "name": "moredebug",
+                            "type": "boolean"
+                        },
+                        "streams": {
+                            "description": "Logger output streams configuration.",
+                            "name": "streams",
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "description": "Stream type. FILE or STDOUT.",
+                                        "name": "type",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "type"
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "required": [
+                "agent"
+            ]
+        }
+    },
+    "required": [
+        "agent",
+        "commands",
+        "server",
+        "registration",
+        "modules",
+        "logger"
+    ]
+}

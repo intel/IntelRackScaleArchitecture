@@ -1,0 +1,197 @@
+{
+    "title": "PSME Rest Server",
+    "description": "Detailed JSON schema documentation used for PSME REST server configuration file. Configuration file is pure JSON format.",
+    "name": "/",
+    "type": "object",
+    "properties": {
+        "server": {
+            "description": "Information about REST server communication. Port numbers, addresses.",
+            "name": "server",
+            "type": "object",
+            "properties": {
+                "url": {
+                    "description": "URI address of the server with port.",
+                    "name": "url",
+                    "type": "string"
+                },
+                "network-interface-name": {
+                    "description": "Name of the network interface used to send and receive packets.",
+                    "name": "network-interface-name",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "url",
+                "network-interface-name"
+            ]
+        },
+        "registration": {
+            "description": "Configuration for the agent registration process.",
+            "name": "registration",
+            "type": "object",
+            "properties": {
+                "port": {
+                    "description": "Port number used by agents to register.",
+                    "name": "port",
+                    "type": "integer"
+                },
+                "minDelay": {
+                    "description": "Minimum delay between heart-beat checks.",
+                    "name": "minDelay",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "port",
+                "minDelay"
+            ]
+        },
+        "commands": {
+            "description": "Configuration which implementation of the commands use to communicate with server.",
+            "name": "commands",
+            "type": "object",
+            "properties": {
+                "generic": {
+                    "description": "Generic command. Implementation based only on POSIX sockets.",
+                    "name": "generic",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "generic"
+            ]
+        },
+        "eventing": {
+            "description": "Eventing feature configuration.",
+            "name": "eventing",
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "description": "Disable of enable eventing feature. Disabling eventing mechanism will turn on polling feature. ",
+                    "name": "enabled",
+                    "type": "boolean"
+                },
+                "address": {
+                    "description": "URL of the listening address used for eventing.",
+                    "name": "address",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "Listen port number used for eventing.",
+                    "name": "port",
+                    "type": "integer"
+                },
+                "poll-interval-sec": {
+                    "description": "Delay between polling tries. Busy waiting interval.",
+                    "name": "poll-interval-sec",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "enabled",
+                "address",
+                "port",
+                "poll-interval-sec"
+            ]
+        },
+        "rest-server": {
+            "description": "General PSME REST server configuration.",
+            "name": "rest-server",
+            "type": "object",
+            "properties": {
+                "storage-service-mode": {
+                    "description": "Enabling Storage Service Mode. This is needed when REST is running on Storage Module.",
+                    "name": "storage-service-mode",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "storage-service-mode"
+            ]
+        },
+        "service-uuid-file": {
+            "description": "Path to service uuid file.",
+            "name": "service-uuid-file",
+            "type": "string"
+        },
+        "logger": {
+            "description": "Configuration of the logger used for PSME REST server.",
+            "name": "logger",
+            "type": "object",
+            "properties": {
+                "app": {
+                    "description": "Container for REST application settings.",
+                    "name": "app",
+                    "type": "object",
+                    "properties": {
+                        "level": {
+                            "description": "Choose one of the 7 severity levels. For more info check man syslog.",
+                            "name": "level",
+                            "type": "string"
+                        },
+                        "timeformat": {
+                            "description": "Define format used for timestamps in log file.",
+                            "name": "timeformat",
+                            "type": "string"
+                        },
+                        "color": {
+                            "description": "Enable or disable colors in log file.",
+                            "name": "color",
+                            "type": "boolean"
+                        },
+                        "output": {
+                            "description": "Turn on, off logging.",
+                            "name": "output",
+                            "type": "boolean"
+                        },
+                        "tagging": {
+                            "description": "Turn on/turn off tagging in application.",
+                            "name": "tagging",
+                            "type": "boolean"
+                        },
+                        "moredebug": {
+                            "description": "Enable/disable additional debug info in log file.",
+                            "name": "moredebug",
+                            "type": "boolean"
+                        },
+                        "streams": {
+                            "description": "Configuration of output methods for logger.",
+                            "name": "streams",
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "description": "Choose one of the output methods. Like FILE of STDOUT.",
+                                        "name": "type",
+                                        "type": "string"
+                                    },
+                                    "file": {
+                                        "description": "Path to the file, if stream type is set to FILE.",
+                                        "name": "file",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "type"
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            "required": [
+                "app"
+            ]
+        }
+    },
+    "required": [
+        "server",
+        "registration",
+        "commands",
+        "eventing",
+        "rest-server",
+        "service-uuid-file",
+        "logger"
+    ]
+}

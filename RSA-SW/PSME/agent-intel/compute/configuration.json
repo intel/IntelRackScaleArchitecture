@@ -1,0 +1,1790 @@
+{
+    "agent": {
+        "type": "Compute",
+        "vendor" : "Intel Corporation",
+        "port" : 7777
+    },
+    "commands" : {
+        "*": {
+            "implementation": "Intel"
+        }
+    },
+    "server": {
+        "port": 7777
+    },
+    "registration": {
+        "ipv4": "localhost",
+        "port": 8383,
+        "interval": 3
+    },
+    "chassis": {
+        "size": 1,
+        "locationOffset": 1,
+        "computeZones": [
+            {}
+        ]
+    },
+    "modules": [
+        {
+            "ipv4": "1.1.2.1",
+            "username": "put_username_hash_here",
+            "password": "put_password_hash_here",
+            "port": 623,
+            "slot": 1,
+            "gpio": {"model": "PCA9555", "bus": 3, "address": 32, "bank": 0, "pins": [0, 3], "inverted": false},
+            "submodules": [
+                {
+                    "port": 62000,
+                    "slot": 1,
+                    "networkInterfaces": [
+                        {
+                            "status": {
+                                "state": "Enabled",
+                                "health": "OK"
+                            },
+                            "frameSize": 1520,
+                            "linkTechnology": "Ethernet",
+                            "speedGbps": 1,
+                            "autosense": true,
+                            "macAddress": "AA:BB:CC:DD:EE:FF",
+                            "ipv4Address": {
+                                "address": "10.0.2.10",
+                                "subnetMask": "255.255.255.0",
+                                "addressOrigin": "DHCP",
+                                "gateway": "10.0.2.1"
+                            },
+                            "ipv6Address": {
+                                "address": "::fe80:1ec1:deff:fe6f:1c37",
+                                "prefixLength": 16,
+                                "addressOrigin": "DHCP",
+                                "addressState": "Preferred"
+                            },
+                            "neighborInfo": {
+                                "switchIdentifier": "123e4567-e89b-12d3-a456-426655440000",
+                                "portIdentifier": "19"
+                            },
+                            "vlanEnable": true,
+                            "vlanCount": 1,
+                            "oem": {}
+                        }
+                    ],
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62001,
+                    "slot": 2,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62002,
+                    "slot": 3,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62003,
+                    "slot": 4,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62004,
+                    "slot": 5,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62005,
+                    "slot": 6,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62006,
+                    "slot": 7,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62007,
+                    "slot": 8,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62008,
+                    "slot": 9,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62009,
+                    "slot": 10,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62010,
+                    "slot": 11,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62011,
+                    "slot": 12,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "ipv4": "1.1.2.2",
+            "username": "put_username_hash_here",
+            "password": "put_password_hash_here",
+            "port": 623,
+            "slot": 2,
+            "gpio": {"model": "PCA9555", "bus": 3, "address": 32, "bank": 0, "pins": [1, 4], "inverted": false},
+            "submodules": [
+                {
+                    "port": 62000,
+                    "slot": 1,
+                    "networkInterfaces": [
+                        {
+                            "status": {
+                                "state": "Enabled",
+                                "health": "OK"
+                            },
+                            "frameSize": 1520,
+                            "linkTechnology": "Ethernet",
+                            "speedGbps": 1,
+                            "autosense": true,
+                            "macAddress": "AA:BB:CC:DD:EE:FF",
+                            "ipv4Address": {
+                                "address": "10.0.2.10",
+                                "subnetMask": "255.255.255.0",
+                                "addressOrigin": "DHCP",
+                                "gateway": "10.0.2.1"
+                            },
+                            "ipv6Address": {
+                                "address": "::fe80:1ec1:deff:fe6f:1c37",
+                                "prefixLength": 16,
+                                "addressOrigin": "DHCP",
+                                "addressState": "Preferred"
+                            },
+                            "neighborInfo": {
+                                "switchIdentifier": "123e4567-e89b-12d3-a456-426655440000",
+                                "portIdentifier": "19"
+                            },
+                            "vlanEnable": true,
+                            "vlanCount": 1,
+                            "oem": {}
+                        }
+                    ],
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62001,
+                    "slot": 2,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62002,
+                    "slot": 3,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62003,
+                    "slot": 4,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62004,
+                    "slot": 5,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62005,
+                    "slot": 6,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62006,
+                    "slot": 7,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62007,
+                    "slot": 8,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62008,
+                    "slot": 9,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62009,
+                    "slot": 10,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62010,
+                    "slot": 11,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62011,
+                    "slot": 12,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "ipv4": "1.1.2.3",
+            "username": "put_username_hash_here",
+            "password": "put_password_hash_here",
+            "port": 623,
+            "slot": 3,
+            "gpio": {"model": "PCA9555", "bus": 3, "address": 32, "bank": 0, "pins": [2, 5], "inverted": false},
+            "submodules": [
+                {
+                    "port": 62000,
+                    "slot": 1,
+                    "networkInterfaces": [
+                        {
+                            "status": {
+                                "state": "Enabled",
+                                "health": "OK"
+                            },
+                            "frameSize": 1520,
+                            "linkTechnology": "Ethernet",
+                            "speedGbps": 1,
+                            "autosense": true,
+                            "macAddress": "AA:BB:CC:DD:EE:FF",
+                            "ipv4Address": {
+                                "address": "10.0.2.10",
+                                "subnetMask": "255.255.255.0",
+                                "addressOrigin": "DHCP",
+                                "gateway": "10.0.2.1"
+                            },
+                            "ipv6Address": {
+                                "address": "::fe80:1ec1:deff:fe6f:1c37",
+                                "prefixLength": 16,
+                                "addressOrigin": "DHCP",
+                                "addressState": "Preferred"
+                            },
+                            "neighborInfo": {
+                                "switchIdentifier": "123e4567-e89b-12d3-a456-426655440000",
+                                "portIdentifier": "19"
+                            },
+                            "vlanEnable": true,
+                            "vlanCount": 1,
+                            "oem": {}
+                        }
+                    ],
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62001,
+                    "slot": 2,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62002,
+                    "slot": 3,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62003,
+                    "slot": 4,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62004,
+                    "slot": 5,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62005,
+                    "slot": 6,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62006,
+                    "slot": 7,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62007,
+                    "slot": 8,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62008,
+                    "slot": 9,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62009,
+                    "slot": 10,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62010,
+                    "slot": 11,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                },
+                {
+                    "port": 62011,
+                    "slot": 12,
+                    "storageControllers":[
+                        {
+                            "type":"RSAStorageController",
+                            "status":{
+                                "state":"Enabled",
+                                "health":"OK"
+                            },
+                            "interface":"SAS",
+                            "fruInfo":{
+                                "serialNumber":"123feacde123",
+                                "manufacturer":"LSI Logic",
+                                "modelNumber":"SAS3008 PCI-Express Fusion-MPT SAS-3",
+                                "partNumber":"rev2"
+                            },
+                            "driveCount":1,
+                            "drives":[
+                                {
+                                    "status":{
+                                        "state":"Enabled",
+                                        "health":"OK"
+                                    },
+                                    "interface":"SAS",
+                                    "type":"SSD",
+                                    "capacityGB":120,
+                                    "rpm":0,
+                                    "fruInfo":{
+                                        "serialNumber":"CLVI3180000F120B",
+                                        "manufacturer":"Intel",
+                                        "modelNumber":"SSDMCEAC120A3",
+                                        "partNumber":"SN03"
+                                    },
+                                    "oem":{
+
+                                    }
+                                }
+                            ],
+                            "oem":{
+
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "logger" : {
+        "agent" : {
+            "level" : "INFO",
+            "timeformat" : "DATE_NS",
+            "color" : true,
+            "output" : true,
+            "tagging" : true,
+            "moredebug" : false,
+            "streams" : [
+                {
+                    "type" : "STDOUT"
+                }
+            ]
+        }
+    }
+}

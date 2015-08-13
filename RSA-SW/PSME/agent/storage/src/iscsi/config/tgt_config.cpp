@@ -1,0 +1,80 @@
+/*!
+ * @section LICENSE
+ *
+ * @copyright
+ * Copyright (c) 2015 Intel Corporation
+ *
+ * @copyright
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * @copyright
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * @copyright
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @section DESCRIPTION
+ */
+
+#include "iscsi/tgt/config/tgt_config.hpp"
+#include "iscsi/tgt/config/tgt_target_config.hpp"
+#include "agent-framework/module/target.hpp"
+#include "logger/logger_factory.hpp"
+#include <stdexcept>
+#include <iostream>
+#include <fstream>
+#include <cstring>
+
+using namespace agent::storage::iscsi::tgt::config;
+using namespace agent_framework::generic;
+using namespace std;
+
+constexpr const char* TGT_TARGET_CONF_EXTENSION = ".conf";
+constexpr const char* TGT_TARGET_CONF_PATH = "/etc/tgt/conf.d/";
+
+void TgtConfig::add_target(const Target::TargetSharedPtr& target) const {
+
+    TgtTargetConfig tgtTargetConfig(target);
+
+    auto target_conf_file_name = get_target_conf_file_name(target->get_target_id());
+    log_info(GET_LOGGER("tgt"), "Add TGT target config file: " + target_conf_file_name);
+
+    ofstream targetConfigFile;
+    const auto& content = tgtTargetConfig.to_string();
+
+    targetConfigFile.open(target_conf_file_name.c_str(), ios_base::out);
+    if (targetConfigFile.is_open()) {
+        targetConfigFile << content;
+        targetConfigFile.close();
+    } else {
+        throw runtime_error("Error opening file for writing: " + target_conf_file_name);
+    }
+}
+
+void TgtConfig::remove_target(const int32_t target_id) const {
+    auto target_conf_file_name = get_target_conf_file_name(target_id);
+    log_info(GET_LOGGER("tgt"), "Remove TGT target config file: " +
+            target_conf_file_name);
+    if (0 != remove(target_conf_file_name.c_str())) {
+        throw runtime_error("Error removing file: " + target_conf_file_name);
+    }
+}
+
+string TgtConfig::get_target_conf_file_name(const int32_t target_id) const {
+    string configuration_path = m_configuration_path;
+    if (configuration_path.empty()) {
+        log_warning(GET_LOGGER("tgt"), "TGT conf-path is empty. Using default path: " <<
+                TGT_TARGET_CONF_PATH);
+        configuration_path = TGT_TARGET_CONF_PATH;
+    }
+    if ('/' != configuration_path.at(configuration_path.size() - 1)) {
+        configuration_path += '/';
+    }
+    return configuration_path + to_string(target_id) + TGT_TARGET_CONF_EXTENSION;
+}

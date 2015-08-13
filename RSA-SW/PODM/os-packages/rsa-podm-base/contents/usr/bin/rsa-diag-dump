@@ -1,0 +1,400 @@
+#!/bin/bash
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#Environment variables
+PATH=$PATH:/sbin
+
+# Global consts
+DEFAULT_SCRIPT_DIR="/usr/share/rsa/diag"
+DEFAULT_ZIP_FILE=diag_dump.zip
+DEFAULT_REPORT_FILE=report.log
+SCRIPT_TIMEOUT=300
+
+# Global variables 
+zip_format=0
+verbose=0
+
+#######################################
+# Displays help for the script.
+# Globals:
+#   None.
+# Arguments:
+#   None.
+# Returns:
+#   None.
+#######################################
+function display_help () {
+  local script_name=$(basename "$0")
+  printf "Usage: $script_name [OPTION]...\n"
+  printf "Executes diagnostic scripts and saves results.\n"
+  printf -- "  -i <dir>\tinput directory (default: /usr/share/rsa/diag)\n"
+  printf -- "  -o <dir>\toutput directory\n"
+  printf -- "  -z\t\tcompress logs\n"
+  printf -- "  -v\t\tverbose mode\n"
+  printf "Examples:\n"
+  printf "$script_name -o /tmp/output\n"
+  printf "$script_name -i /usr/share/rsa/diag -o /tmp/output -z\n"
+}
+
+#######################################
+# Parses script parameters.
+# Globals:
+#   zip_format
+#   verbose
+#   input_dir
+#   output_dir
+# Arguments:
+#   Script's parameters
+# Returns:
+#   None
+#######################################
+function process_parameters () {  
+  input_dir=$DEFAULT_SCRIPT_DIR
+
+  while getopts ":i:o:vz" opt; do
+    case $opt in
+      i)
+        input_dir=`readlink -e $OPTARG` # Convert to absolute path
+        ;;
+      o)        
+        output_dir=`readlink -m $OPTARG`
+        ;;
+      z)        
+        zip_format=1
+        ;;
+      v)        
+        verbose=1
+        ;;
+      \?)
+        echo "Invalid option: -$OPTARG" >&2
+        exit 1
+        ;;
+      :)
+        echo "Option -$OPTARG requires an argument." >&2
+        exit 1
+        ;;
+    esac
+  done
+}
+
+#######################################
+# Displays main params for the script.
+# Globals:
+#   SCRIPT_TIMEOUT
+#   input_dir
+#   zip_format
+# Arguments:
+#   None.
+# Returns:
+#   None.
+#######################################
+function display_params () {
+  log "Input: $input_dir"
+  if [ $zip_format = 1 ]; then
+    zip=/${DEFAULT_ZIP_FILE}
+  else
+    zip=""
+  fi
+  log "Output: ${output_dir}${zip}"
+  log "Timeout for a single script: $SCRIPT_TIMEOUT s."
+}
+
+#######################################
+# Validates script parameters.
+# Globals:
+#   output_dir
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
+function validate_parameters () {
+  if [ -z "$output_dir" ]; then    
+    error "Missing output directory. Use -o parameter to specify target folder." >&2
+    exit 1
+  fi
+}
+
+#######################################
+# verbose log.
+# Globals:
+#   verbose
+# Arguments:
+#   String to display in verbose mode
+# Returns:
+#   None
+#######################################
+function log () {
+  if [[ $verbose -eq 1 ]]; then
+    echo -e "$@"
+  fi
+}
+
+#######################################
+# Returns error string on the screen and stops script.
+# Globals:
+#   None
+# Arguments:
+#   String to display
+# Returns:
+#   None
+#######################################
+function error () {
+  echo "Error! $@"
+  exit 1
+}
+
+#######################################
+# Adds string to the final report about script execution.
+# Globals:
+#   DEFAULT_REPORT_FILE
+#   tmp_dir
+#   output_dir
+# Arguments:
+#   String to be written in report file. 
+# Returns:
+#   None
+#######################################
+function report () {
+  if [ $zip_format = 1 ]; then
+    local output_report_dir=$tmp_dir
+  else
+    local output_report_dir=$output_dir
+  fi
+
+  local report_path="${output_report_dir}/${DEFAULT_REPORT_FILE}"
+  printf "$@" >> "$report_path"
+}
+
+#######################################
+# Validates input directory.
+# Globals:
+#   input_dir
+# Arguments:
+#   Input directory
+# Returns:
+#   None
+#######################################
+function validate_input_dir () {
+  # Check whether input dir exists
+  if [ ! -d "$input_dir" ]; then
+    error "Input directory doesn't exist: $input_dir"
+  fi
+}
+
+#######################################
+# Creates output directory (if required) and removes previous dump.
+# Globals:
+#   DEFAULT_ZIP_FILE
+#   output_dir
+#   zip_format
+# Arguments:
+#   Input directory
+# Returns:
+#   None
+#######################################
+function prepare_output_dir () {
+  if [ ! -d "$output_dir" ]; then
+    log "Creating root output directory: $output_dir"
+    mkdir -p "$output_dir"
+  fi
+
+  # Remove previous dump (if exists) in zip mode
+  local dump_path="${output_dir}/${DEFAULT_ZIP_FILE}"
+  if [ $zip_format = 1 ]; then
+    if [ -e "$dump_path" ]; then
+      log "Removing previous diagnostic dump (zip file): $dump_path"
+      rm -r -f "$dump_path"
+    fi
+  else
+    # Clean report file (if exists)
+    local report_path="${output_dir}/${DEFAULT_REPORT_FILE}"
+    if [ -e "$report_path" ]; then
+      log "Removing report previous report: $report_path"
+      rm -r -f "$report_path"
+    fi
+  fi
+
+}
+
+#######################################
+# Returns list of scripts/apps with path.
+# Globals:
+#   input_dir
+# Arguments:
+#   None
+# Returns:
+#   List of executables scripts and apps.
+#######################################
+function get_scripts () {
+
+  # Remove root path to scripts from output. It allows to re-create the same dir structure for log files.
+  # /usr/share/diagnostic/rcpm/routing -> /rcpm/routing
+  local files=`find $input_dir -type f -executable -print | sed 's|'$input_dir'||'`
+
+  echo "$files"
+}
+
+#######################################
+# Executes scripts and stores output.
+# Globals:
+#   zip_format
+#   tmp_dir
+# Arguments:
+#   List of script pathes.
+# Returns:
+#   None.
+#######################################
+function execute_scripts () {
+  if [[ -z $@ ]]; then
+    error "Scripts not found in $input_dir"
+  fi
+
+  # Generate temp directory for logs before archive creation (if requested)
+  if [ $zip_format = 1 ]; then
+    tmp_dir=`mktemp -d`    
+  fi
+
+  for file in $@; do
+    execute "${file}"
+  done
+}
+
+#######################################
+# Executes a single script or application.
+# Globals:
+#   SCRIPT_TIMEOUT
+#   output_dir
+#   tmp_dir
+# Arguments:
+#   Scripts path without root directory, e.g. /rcpm/routing.sh
+# Returns:
+#   None.
+#######################################
+function execute () {
+  # e.g. /rcpm/routing.sh  
+  local script_subdir_with_file=${@#?}
+  # e.g. /usr/share/rcpm/routing.sh
+  local script_path=${input_dir}/${script_subdir_with_file}
+
+  # Use temp directory for logs in zip mode
+  if [ $zip_format = 1 ]; then
+    local output_log_dir=$tmp_dir
+  else
+    local output_log_dir=$output_dir
+  fi
+  
+  # e.g. ./output/rcpm/routing.sh
+  local log_path=${output_log_dir}/${script_subdir_with_file}.log
+  # e.g. ./output/rcpm
+  local log_dir=$(dirname "$log_path")
+
+  if [ ! -d "$log_dir" ]; then
+    log "Creating output subdirectory: $log_dir"
+    mkdir -p "$log_dir"
+  fi
+
+  log "Executing $script_path"
+  printf "$script_subdir_with_file"
+  report "$script_subdir_with_file"
+
+  # Execute command with specified timeout
+  timeout $SCRIPT_TIMEOUT $script_path &> $log_path
+  ret=`echo $?`
+  case $ret in
+    0)
+      status="OK"
+      ;;
+    124)
+      status="TIMEOUT"
+      ;;
+    *)
+      status="ERROR"
+      ;;
+  esac
+  
+  local status_str=" [${status}]\n"
+  printf "$status_str"
+  report "$status_str"
+
+  log "Log created: $log_path"
+}
+
+#######################################
+# Compresses output files (if requested).
+# Globals:
+#   output_dir
+# Arguments:
+#   None.
+# Returns:
+#   None.
+#######################################
+function compress_output () {
+  local zip_path=$output_dir/$DEFAULT_ZIP_FILE
+
+  log "Creating zip archive $zip_path"
+  cd $tmp_dir
+
+  output=`zip -r $zip_path *` 
+  log $output
+ 
+  # Remove temporary dir
+  log "Removing temp directory: $tmp_dir"
+  rm -r -f $tmp_dir
+}
+
+# Main
+
+# Exit on errors
+set -e
+
+# Read parameters of script and save data into globals
+process_parameters "$@"
+
+# Script can be executed without any parameter - help should be displayed
+if [ $# -ne 0 ]; then
+  validate_parameters
+else  
+  display_help
+  exit 0
+fi
+
+display_params
+
+# Check that input directory exists
+validate_input_dir 
+
+script_list=$(get_scripts)
+log "Scripts for execution located in $input_dir:\n$script_list"
+
+# Clean-up actions before start
+prepare_output_dir
+
+# Do not exit when script returns error
+set +e
+
+# Execute all scripts and save output log
+execute_scripts $script_list
+
+set -e
+
+# Compress output from script logs and remove log files 
+if [ $zip_format = 1 ]; then
+  compress_output
+fi
+
+log "Diagnostic dump ready"
+

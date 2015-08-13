@@ -1,0 +1,62 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          rcpm-after-upgrade
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: RSA RCPM After Upgrade Script
+# Description:       Script containing additional actions required to be executed after upgrade process
+### END INIT INFO
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+LOG_FILE="/var/log/rsa/rsa-upgrade.log"
+BOOT_MOUNTPOINT="/mnt/rcpm-boot"
+GRUB_CONFIG_FILE="/boot/grub/grub.cfg.rsa.new"
+SYMLINK_AFTER_UPGRADE_SCRIPT="/etc/rc2.d/S99rcpm-after-upgrade"
+THIS_SCRIPT_PATH="/etc/init.d/rcpm-after-upgrade"
+BOOT_PARTITION=""
+
+clear_all_variables() {
+	rm $SYMLINK_AFTER_UPGRADE_SCRIPT >> $LOG_FILE 2>&1
+	umount -l $BOOT_PARTITION >> $LOG_FILE 2>&1
+	rm GRUB_CONFIG_FILE >> $LOG_FILE 2>&1
+	rmdir $BOOT_MOUNTPOINT >> $LOG_FILE 2>&1
+}
+upgrade_grub() {
+	echo "" > $LOG_FILE;
+	DISK=`grub-probe --target=disk --device \`df -h / | tail -1 | awk {'print $1'}\``
+	BOOT_PARTITION=`fdisk -l | grep "$DISK" | grep "\*" | awk {'print $1'}`
+	
+	mkdir -p $BOOT_MOUNTPOINT >> $LOG_FILE 2>&1
+	mount $BOOT_PARTITION $BOOT_MOUNTPOINT >> $LOG_FILE 2>&1
+	if ! mv $GRUB_CONFIG_FILE $BOOT_MOUNTPOINT/boot/grub/grub.cfg  >> $LOG_FILE 2>&1 ; then
+		echo "Unable to create new GRUB configuartion. Aborting upgrade." >> $LOG_FILE 2>&1
+		echo "Unable to create new GRUB configuartion. Aborting upgrade. Forcing reboot."
+		clear_all_variables
+		reboot
+	fi
+	clear_all_variables	
+}
+
+case "$1" in
+	start)
+		upgrade_grub
+		;;
+	*)
+		echo "DO NOT USE IT MANUALLY. Thank You."
+		exit 1
+esac

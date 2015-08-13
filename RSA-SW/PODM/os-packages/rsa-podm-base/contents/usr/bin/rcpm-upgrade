@@ -1,0 +1,792 @@
+#!/bin/bash
+
+# Copyright (c) 2015 Intel Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# RSA RCPM Update Tool
+# This tool performs upgrade of RSA RCPM software on client machine.
+# It determines all required partitions, preformat them and also configure
+# new system to work on pre-formatted partition.
+# After upgrade, script will update GRUB2 configuration and reboot to newly
+# created system.
+#
+# EXIT CODES:
+# 1 - no tarball file provided
+# 2 - script not executed as root
+# 3 - client aborts upgrade process
+# 4 - required file not found
+# 5 - tarball integrity check
+# 6 - cannot make GRUB entry executable
+# 7 - user cancels
+#
+# 10 - number of partitions on disk does not match expected
+# 11 - could not determine partition
+# 12 - provided device is not correct
+# 13 - automatic detection of upgrade partition failed
+#
+# 20 - mkdir fail
+# 21 - unable to format disk
+# 22 - unable to mount partition
+# 23 - unable to extract RCPM tarball
+#
+# 40 - unable to create new fstab file
+# 41 - unable to find kernel or initrd files
+#
+# 50 - unable to create new entry for GRUB2
+# 51 - unable to copy new GRUB2 entries to upgrade partition
+# 52 - unable to set new GRUB2 configuration file or GRUB2 environment variables
+# 53 - unable to create symlink for after upgrade script
+# 54 - unable to change GRUB entries
+#
+# 60 - missing file in upgraded system
+#
+
+#############
+# CONSTS
+#############
+
+#DISK REQUIREMENTS
+MIN_EXPECTED_NUMBER_OF_PARTITIONS=4
+#RCPM 5GB
+RCPM_PARTITION_SIZE_IN_BYTES_MIN=5500829696
+#SWAP 512GB
+SWAP_PARTITION_SIZE_IN_BYTES_MIN=536870912
+
+#FILE CONSTS
+UPGRADE_PARTITION_MOUNTPOINT="/mnt/rcpm-upgrade-partition"
+BOOT_PARTITION_MOUNTPOINT="/mnt/rcpm-boot"
+GRUB_ENTRY_TEMPLATE="/etc/rsa/upgrade/rsa_grub_entry.entry"
+RSA_RCPM_AFTER_UPGRADE_SCRIPT="/etc/init.d/rcpm-after-upgrade"
+RSA_RCPM_AFTER_UPGRADE_SCRIPT_MOUNTED="../init.d/rcpm-after-upgrade"
+FILE_GRUB_ENTRY_ACTIVE="06_primary_partition"
+FILE_GRUB_ENTRY_UPGRADE="07_secondary_partition"
+GRUB_CONFIG_PATH="/boot/grub/grub.cfg";
+ETC_GRUB_PATH="/etc/grub.d"
+UPGRADE_GRUB_CONFIG="grub.cfg.rsa.new"
+SYMLINK_TO_AFTER_UPGRADE_SCRIPT_PATH="/etc/rc2.d/S99rcpm-after-upgrade"
+
+KERNEL_IMAGE="/vmlinuz"
+INITRD_IMAGE="/initrd.img"
+
+#TEMPORARY FILES
+TMP_DIR="/tmp/rsa"
+TMP_DIR_GRUB="/tmp/rsa/grub_entries"
+
+#PLACEHOLDER IN RSA GRUB MENU ENTRY
+ENTRY_NAME_PLCHLDR='\${ENTRY_NAME}'
+DISK_UUID_PLCHLDR='\${DISK_UUID}'
+BIOS_HINTS_PLCHLDR='\${BIOS_HINTS}'
+HINT_STRING_PLCHLDR='\${HINT_STRING}'
+KERNEL_PATH_PLCHLDR='\${KERNEL_PATH}'
+INIT_RD_PATH_PLCHLDR='\${INIT_RD_PATH}'
+
+RSA_ENTRY_NEW="RSA SW"
+RSA_ENTRY_OLD="RSA SW (old)"
+
+#############
+# VARIABLES
+#############
+UPDATE_FILE=""
+
+PRIMARY_PARTITION=""
+SECONDARY_PARTITION=""
+
+DISK=""
+DISK_SHORT=""
+
+ACTIVE_PARTITION=""
+ACTIVE_PARTITION_SHORT=""
+ACTIVE_PARTITION_DISK_NUMBER=""
+ACTIVE_PARTITION_UUID=""
+ACTIVE_PARTITION_SIZE=""
+
+BOOT_PARTITION=""
+BOOT_PARTITION_SHORT=""
+BOOT_PARTITION_UUID=""
+
+SWAP_PARTITION=""
+SWAP_PARTITION_SHORT=""
+SWAP_PARTITION_UUID=""
+
+EXTENDED_PARTITION=""
+EXTENDED_PARTITION_SHORT=""
+
+UPGRADE_PARTITION=""
+UPGRADE_PARTITION_SHORT=""
+UPGRADE_PARTITION_UUID=""
+UPGRADE_PARTITION_DISK_NUMBER=""
+
+#############
+# FUNCTIONS
+#############
+function unmountDevicesAndRemoveDirectories {
+	umount -l $BOOT_PARTITION > /dev/null 2>&1
+	umount -l $UPGRADE_PARTITION > /dev/null 2>&1
+
+	rmdir $UPGRADE_PARTITION_MOUNTPOINT > /dev/null 2>&1
+	rmdir $BOOT_PARTITION_MOUNTPOINT > /dev/null 2>&1
+	rm -rf $TMP_DIR > /dev/null 2>&1
+}
+
+function checkTarball {
+	echo "Checking $UPDATE_FILE file..."
+
+	if ! gunzip -t $UPDATE_FILE > /dev/null 2>&1; then
+		echo "File $UPDATE_FILE seems like being corrupted." 1>&2
+		echo "Aborting update." 1>&2
+		exit 5
+	fi
+
+	if ! tar -tzf $UPDATE_FILE > /dev/null 2>&1; then
+		echo "File $UPDATE_FILE seems like being corrupted." 1>&2
+		echo "Aborting update." 1>&2
+		exit 5
+	fi
+}
+
+# Replace placeholder with actual value in target file
+# When error occurs, it quits w error code 1 (one)
+function replacePlaceholdersInFile {
+	PLACEHOLDER_TEMPLATE="$1"
+	PLACEHOLDER_VALUE="$2"
+	FILE_TO_UPDATE="$3"
+
+	PARAM="s/$PLACEHOLDER_TEMPLATE/$PLACEHOLDER_VALUE/g"
+	sed -i "$PARAM" $FILE_TO_UPDATE  1>&2
+}
+
+function fillGrubTemplate {
+	TARGET_FILE_NAME="$1"
+	TARGET_ENTRY_NAME="$2"
+	TARGET_DISK_UUID="$3"
+	TARGET_BIOS_HINTS="$4"
+	TARGET_HINT_STRING="$5"
+	TARGET_KERNEL_PATH="$6"
+	TARGET_INIT_RD_PATH="$7"
+
+	ERROR_STANDARD_MESSAGE="Problem with upgrading GRUB2 entries."
+
+	# update entry name
+	replacePlaceholdersInFile "$ENTRY_NAME_PLCHLDR" "$TARGET_ENTRY_NAME" "$TARGET_FILE_NAME" 1>&2
+	if [[ $? -ne 0 ]]; then
+		echo "$ERROR_STANDARD_MESSAGE"
+		echo "Aborting..." 1>&2
+		unmountDevicesAndRemoveDirectories
+		exit 54
+	fi
+
+	# update disk UUID
+	replacePlaceholdersInFile "$DISK_UUID_PLCHLDR" "$TARGET_DISK_UUID" "$TARGET_FILE_NAME" 1>&2
+	if [[ $? -ne 0 ]]; then
+		echo "$ERROR_STANDARD_MESSAGE"
+		echo "Aborting..." 1>&2
+		unmountDevicesAndRemoveDirectories
+		exit 54
+	fi
+
+	# update bios_hints (hd#,msdos#)
+	replacePlaceholdersInFile "$BIOS_HINTS_PLCHLDR" "$TARGET_BIOS_HINTS" "$TARGET_FILE_NAME" 1>&2
+	if [[ $? -ne 0 ]]; then
+		echo "$ERROR_STANDARD_MESSAGE"
+		echo "Aborting..." 1>&2
+		unmountDevicesAndRemoveDirectories
+		exit 54
+	fi
+
+	# update hint string, ex. --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1
+	replacePlaceholdersInFile "$HINT_STRING_PLCHLDR" "$TARGET_HINT_STRING" "$TARGET_FILE_NAME" 1>&2
+	if [[ $? -ne 0 ]]; then
+		echo "$ERROR_STANDARD_MESSAGE"
+		echo "Aborting..." 1>&2
+		unmountDevicesAndRemoveDirectories
+		exit 54
+	fi
+	# update kernel path
+	replacePlaceholdersInFile "$KERNEL_PATH_PLCHLDR" "\\$TARGET_KERNEL_PATH" "$TARGET_FILE_NAME" 1>&2
+	if [[ $? -ne 0 ]]; then
+		echo "$ERROR_STANDARD_MESSAGE"
+		echo "Aborting..." 1>&2
+		unmountDevicesAndRemoveDirectories
+		exit 54
+	fi
+
+	# update initrd path
+	replacePlaceholdersInFile "$INIT_RD_PATH_PLCHLDR" "\\$TARGET_INIT_RD_PATH" "$TARGET_FILE_NAME" 1>&2
+	if [[ $? -ne 0 ]]; then
+		echo "$ERROR_STANDARD_MESSAGE"
+		echo "Aborting..." 1>&2
+		unmountDevicesAndRemoveDirectories
+		exit 54
+	fi
+}
+
+function createFstabFile {
+	echo "# ***DO NOT EDIT - Generated by Intel® RSA RCPM Upgrade Tool***" > $TMP_DIR/fstab.new
+	if [[ $? -ne 0 ]]; then
+		unmountDevicesAndRemoveDirectories
+		echo "Unable to create fstab file" 1>&2
+		echo "Aborting..." 1>&2
+		exit 40
+	fi
+	echo "UUID=$UPGRADE_PARTITION_UUID /               ext4    errors=remount-ro 0       1" >> $TMP_DIR/fstab.new
+	echo "UUID=$SWAP_PARTITION_UUID none            swap    sw              0       0" >> $TMP_DIR/fstab.new
+
+	if ! mv $TMP_DIR/fstab.new $UPGRADE_PARTITION_MOUNTPOINT/etc/fstab ; then
+		unmountDevicesAndRemoveDirectories
+		echo "Unable to create fstab file" 1>&2
+		echo "Aborting..." 1>&2
+		exit 40
+	fi
+}
+
+function recreateDirectories {
+	mkdir $UPGRADE_PARTITION_MOUNTPOINT/proc
+	mkdir $UPGRADE_PARTITION_MOUNTPOINT/sys
+	mkdir $UPGRADE_PARTITION_MOUNTPOINT/mnt
+	mkdir $UPGRADE_PARTITION_MOUNTPOINT/media
+	mkdir $UPGRADE_PARTITION_MOUNTPOINT/run
+	mkdir $UPGRADE_PARTITION_MOUNTPOINT/dev
+}
+
+function backupGrubEntries {
+	if ! cp -a $ETC_GRUB_PATH/* $TMP_DIR_GRUB; then
+		echo "Problem with copying files to grub directory. Error code: $?" 1>&2
+		echo "Aborting..." 1>&2
+		exit 51
+	fi
+}
+
+function restoreGrubEntries {
+	cp -a $TMP_DIR_GRUB/* $ETC_GRUB_PATH/
+}
+function determineKernelAndInitRdCorrectness {
+	if ! ls -L $UPGRADE_PARTITION_MOUNTPOINT$KERNEL_IMAGE > /dev/null 2>&1 ||  ! ls -L $UPGRADE_PARTITION_MOUNTPOINT$INITRD_IMAGE > /dev/null 2>&1; then
+		echo "Symlink for kernel or initrd does not point to a existing file." 1>&2
+		echo "Aborting..." 1>&2
+		unmountDevicesAndRemoveDirectories
+		exit 41
+	fi
+}
+
+function generateGrub {
+	# backup all entries in /etc/grub.d
+	backupGrubEntries
+
+	#Check if symlinks are correct
+	determineKernelAndInitRdCorrectness
+
+	ACTIVE_BIOS_HINTS=`grub-probe --target=bios_hints --device $UPGRADE_PARTITION`
+	ACTIVE_HINT_STRING=`grub-probe --target=hints_string --device $UPGRADE_PARTITION`
+
+### GENERATE GRUB.CFG FOR UPGRADED PARTITION
+	if cp $ETC_GRUB_PATH/$FILE_GRUB_ENTRY_ACTIVE $ETC_GRUB_PATH/$FILE_GRUB_ENTRY_UPGRADE; then
+		if ! sed -i 's/\x27[A-Za-z ]\+\x27/\x27'"$RSA_ENTRY_OLD"'\x27/' /etc/grub.d/$FILE_GRUB_ENTRY_UPGRADE; then
+			echo "Problem with upgrading GRUB2 entries. Error code: $?" 1>&2
+			echo "Aborting..." 1>&2
+			exit 54
+		fi
+	else
+		echo "Problem with copying files to for GRUB new confiugration for upgrade partition. Error code: $?" 1>&2
+		echo "Aborting..." 1>&2
+		restoreGrubEntries
+		unmountDevicesAndRemoveDirectories
+		exit 51
+	fi
+
+	if cp $GRUB_ENTRY_TEMPLATE $TMP_DIR/$FILE_GRUB_ENTRY_ACTIVE; then
+		fillGrubTemplate "$TMP_DIR/$FILE_GRUB_ENTRY_ACTIVE" "$RSA_ENTRY_NEW" $UPGRADE_PARTITION_UUID "$ACTIVE_BIOS_HINTS" "$ACTIVE_HINT_STRING" $KERNEL_IMAGE $INITRD_IMAGE
+		if cp $TMP_DIR/$FILE_GRUB_ENTRY_ACTIVE $ETC_GRUB_PATH/$FILE_GRUB_ENTRY_ACTIVE; then
+			chmod +x /etc/grub.d/$FILE_GRUB_ENTRY_ACTIVE
+		else
+			echo "Problem with copying files to upgrade partition. Error code: $?" 1>&2
+			echo "Aborting..." 1>&2
+			restoreGrubEntries
+			unmountDevicesAndRemoveDirectories
+			exit 51
+		fi
+	else
+		echo "Problem with copying files to /tmp. Error code: $?" 1>&2
+		echo "Aborting..." 1>&2
+		restoreGrubEntries
+		unmountDevicesAndRemoveDirectories
+		exit 51
+	fi
+
+	grub-mkconfig -o $UPGRADE_PARTITION_MOUNTPOINT/boot/grub/$UPGRADE_GRUB_CONFIG > /dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		echo "Unable to create new GRUB configuration file for upgrade partition. Error code: $?" 1>&2
+		echo "Aborting..." 1>&2
+		restoreGrubEntries
+		unmountDevicesAndRemoveDirectories
+		exit 52
+	fi
+
+
+### GENERATE GRUB.CFG FOR ACTIVE PARTITION
+	restoreGrubEntries
+
+	if cp $GRUB_ENTRY_TEMPLATE $TMP_DIR/$FILE_GRUB_ENTRY_UPGRADE; then
+		fillGrubTemplate "$TMP_DIR/$FILE_GRUB_ENTRY_UPGRADE" "$RSA_ENTRY_OLD" $UPGRADE_PARTITION_UUID "$ACTIVE_BIOS_HINTS" "$ACTIVE_HINT_STRING" $KERNEL_IMAGE $INITRD_IMAGE
+		if cp $TMP_DIR/$FILE_GRUB_ENTRY_UPGRADE $ETC_GRUB_PATH/$FILE_GRUB_ENTRY_UPGRADE; then
+			chmod +x $ETC_GRUB_PATH/$FILE_GRUB_ENTRY_UPGRADE
+		else
+			echo "Problem with copying files to grub directory. Error code: $?" 1>&2
+			echo "Aborting..." 1>&2
+			restoreGrubEntries
+			unmountDevicesAndRemoveDirectories
+			exit 51
+		fi
+	else
+		echo "Problem with copying files to /tmp. Error code: $?" 1>&2
+		echo "Aborting..." 1>&2
+		restoreGrubEntries
+		unmountDevicesAndRemoveDirectories
+		exit 51
+	fi
+
+	update-grub > /dev/null 2>&1
+	if [[ $? -ne 0 ]]; then
+		echo "Problem with generating GRUB file. Exit code: $?" 1>&2
+		echo "Aborting..." 1>&2
+		restoreGrubEntries
+		unmountDevicesAndRemoveDirectories
+		exit 52
+	fi
+
+	grub-editenv $BOOT_PARTITION_MOUNTPOINT/boot/grub/grubenv create > /dev/null 2>&1
+	if [[ $? -ne 0 ]]; then
+		echo "Problem with clearing grubenv file.  Error code: $?" 1>&2
+		echo "Aborting..." 1>&2
+		restoreGrubEntries
+		unmountDevicesAndRemoveDirectories
+		exit 52
+	fi
+
+	grub-reboot 1 --boot-directory=$BOOT_PARTITION_MOUNTPOINT/boot > /dev/null 2>&1
+	if [[ $? -ne 0 ]]; then
+		echo "Unable to set boot to new partition. Error code: $?" 1>&2
+		echo "Aborting..." 1>&2
+		restoreGrubEntries
+		unmountDevicesAndRemoveDirectories
+		exit 52
+	fi
+
+	grub-mkconfig -o $BOOT_PARTITION_MOUNTPOINT/boot/grub/grub.cfg > /dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		echo "Unable to create new GRUB configuration file. Error code: $?" 1>&2
+		echo "Aborting..." 1>&2
+		restoreGrubEntries
+		unmountDevicesAndRemoveDirectories
+		exit 52
+	fi
+}
+
+function addAfterUpgradeScript {
+	if ! ln -s $RSA_RCPM_AFTER_UPGRADE_SCRIPT_MOUNTED "$UPGRADE_PARTITION_MOUNTPOINT$SYMLINK_TO_AFTER_UPGRADE_SCRIPT_PATH"; then
+		echo "Unable to create new GRUB configuration file. Error code: $?" 1>&2
+		echo "Aborting..." 1>&2
+		unmountDevicesAndRemoveDirectories
+		exit 53
+	fi
+}
+
+function showWarningMessage {
+	echo ""
+	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	echo "!!!!!!        WARNING          !!!!!!"
+	echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	echo ""
+	echo "This RSA RCPM Software Upgrade script WILL ERASE ALL DATA on $UPGRADE_PARTITION partition!"
+	echo "AFTER THIS POINT, ALL DATA ON $UPGRADE_PARTITION WILL BE NO LONGER AVAILABLE!"
+	echo "Please, make a copy of all necessary data from this partition!"
+	echo ""
+	read -r -p "ARE YOU SURE AND YOU DO WANT to continue with the process and ERASE $UPGRADE_PARTITION? [y/N] " user_response
+	echo ""
+	user_response=${user_response,,}
+	if ! [[ $user_response =~ ^(yes|y)$ ]]; then
+		echo "Cancelling update."
+		unmountDevicesAndRemoveDirectories
+		exit 3
+	fi
+	echo ""
+}
+
+function checkExtractedTarball {
+	echo "Checking up upgraded system..."
+
+	if [ ! -e $UPGRADE_PARTITION_MOUNTPOINT$RSA_RCPM_AFTER_UPGRADE_SCRIPT_PATH ]; then
+		echo "Missing files in upgraded system."
+		echo "Cancelling update."
+		unmountDevicesAndRemoveDirectories
+		exit 60
+	fi
+
+	echo "Check complete"
+}
+
+function user_abort {
+	echo ""
+	echo "SIGINT received. Aborting upgrade."
+	unmountDevicesAndRemoveDirectories
+	exit 7
+}
+
+function help {
+	echo "Proper use of this script is"
+	echo "rcpm-upgrade [OPTIONS] \"/rcpm-release.tar.gz\""
+	echo ""
+	echo "Possible options are:"
+	echo "-s <device> - set the device to be used as a swap partition"
+	echo "-t <device> - set the device to be used as a target partition"
+}
+
+#############
+# MAIN SCRIPT
+#############
+
+#trap for SIGINT signal
+trap user_abort SIGINT
+
+while getopts ":s:t:h" opt; do
+  case $opt in
+    s)
+	SWAP_PARTITION="$OPTARG"
+      ;;
+    t)
+	UPGRADE_PARTITION="$OPTARG"
+      ;;
+    h)
+	help
+	exit
+      ;;
+    \?)
+	echo "Unknown option: -$OPTARG" 1>&2
+	help
+	exit 1
+      ;;
+    :)
+	echo "Option -$OPTARG requires an argument" 1>&2
+	help
+	exit 1
+      ;;
+  esac
+done
+#required for access to the main parameter
+shift $((OPTIND-1))
+
+#Check if tarball file is provided
+if [ "$1" != "" ] && [ -f $1 ]; then
+ UPDATE_FILE=$1
+else
+ echo "Please provide a tarball file to update from it." 1>&2
+ echo "e.g." 1>&2
+ echo "rcpm-upgrade \"/rcpm-release.tar.gz\"" 1>&2
+ exit 1
+fi
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This upgrade script must be run as root." 1>&2
+   exit 2
+fi
+
+echo ""
+echo "RSA RCPM Software Upgrade Script by Intel Corporation®"
+echo ""
+
+
+
+echo "Checking up for required files..."
+if [ ! -f /etc/grub.d/$FILE_GRUB_ENTRY_ACTIVE ]; then
+	echo "Missing GRUB entry for currently active partition!" 1>&2
+	echo "Cannot proceed with upgrade process. Aborting." 1>&2
+	exit 4
+else
+	if ! [[ -x "/etc/grub.d/$FILE_GRUB_ENTRY_ACTIVE" ]]; then
+		if ! chmod +x /etc/grub.d/$FILE_GRUB_ENTRY_ACTIVE; then
+			echo "Unable to make /etc/grub.d/$FILE_GRUB_ENTRY_ACTIVE file executable." 1>&2
+			echo "Cannot proceed with upgrade process. Aborting." 1>&2
+			exit 6
+		fi
+	fi
+fi
+
+if [ ! -f $GRUB_ENTRY_TEMPLATE ]; then
+	echo "Missing RSA GRUB Menu Entry template!" 1>&2
+	echo "Cannot proceed with upgrade process. Aborting." 1>&2
+	exit 4
+fi
+echo "Check complete"
+
+echo "Initialization of the script..."
+
+#Check tarball integrity
+checkTarball
+
+if ! mkdir -p $TMP_DIR; then
+	echo "Unable to create directory in /tmp ." 1>&2
+	echo "Cannot proceed with upgrade process. Aborting." 1>&2
+	exit 20
+fi
+
+if ! mkdir -p $TMP_DIR_GRUB; then
+	echo "Unable to create directory in /tmp ." 1>&2
+	echo "Cannot proceed with upgrade process. Aborting." 1>&2
+	exit 20
+fi
+
+
+#Determine which disk we use
+DISK=`grub-probe --target=disk --device \`df -h / | tail -1 | awk {'print $1'}\``
+DISK_SHORT=`echo $DISK | sed 's/.*\///'`
+
+echo "Checking up number of partitions on the disk."
+ACTUAL_NUMBER_OF_PARTITIONS=`fdisk -l | grep -cE "$DISK[0-9]+"`
+
+if (( "$ACTUAL_NUMBER_OF_PARTITIONS" < "MIN_EXPECTED_NUMBER_OF_PARTITIONS" )); then
+	echo "Unable to complete upgrade." 1>&2
+	echo "Minimum number of partitions on disk $DISK is MIN_EXPECTED_NUMBER_OF_PARTITIONS Actual: $ACTUAL_NUMBER_OF_PARTITIONS." 1>&2
+	echo "Aborting upgrade." 1>&2
+	exit 10
+fi
+
+echo "Number of partitions is as expected. Continuing..."
+
+echo "Looking up for required partitions..."
+
+#Determine what partition is currently root and get its UUID
+ACTIVE_PARTITION=`df -h / | tail -1 | awk {'print $1'}`
+ACTIVE_PARTITION_SHORT=`lsblk -lnbo NAME $ACTIVE_PARTITION`
+ACTIVE_PARTITION_DISK_NUMBER=`echo "$ACTIVE_PARTITION" | grep -Eo "[0-9]+"`
+ACTIVE_PARTITION_UUID=`blkid -s UUID -o value $ACTIVE_PARTITION`
+ACTIVE_PARTITION_SIZE=`lsblk -lnbo SIZE $ACTIVE_PARTITION`
+#Determine the /boot partition or check it if provided with -b option
+BOOT_PARTITION=`fdisk -l | grep "$DISK" | grep "\*" | awk {'print $1'}`
+BOOT_PARTITION_SHORT=`lsblk -lnbo NAME $BOOT_PARTITION`
+BOOT_PARTITION_UUID=`blkid -s UUID -o value $BOOT_PARTITION`
+
+
+#Determine extended partition
+EXTENDED_PARTITION=`fdisk -l | grep $DISK | grep "Extended" | awk {'print $1'}`
+#Determine the swap partition or check the device provided by -s option
+
+if [ -z $SWAP_PARTITION ]; then
+	SWAP_PARTITION=`swapon -s | tail -n +2 | awk {'print $1'}`
+else
+	echo "Checking swap partition passed with -s parameter: $SWAP_PARTITION"
+	if [ ! -e $SWAP_PARTITION ]; then
+		echo "$SWAP_PARTITION does not exists!"
+		echo "Aborting..."
+		exit 12
+	fi
+
+	if [[ "$SWAP_PARTITION" == "$ACTIVE_PARTITION" ]]; then
+		echo "$SWAP_PARTITION is the same as active partition!"
+		echo "Aborting..."
+		exit 12
+	fi
+
+	if [[ "$SWAP_PARTITION" == "$BOOT_PARTITION" ]]; then
+		echo "$SWAP_PARTITION is the same as boot partition!"
+		echo "Aborting..."
+		exit 12
+	fi
+
+	SWAP_PARTITION_SIZE=`lsblk -lnbo SIZE $SWAP_PARTITION`
+	if [ "$SWAP_PARTITION_SIZE" -lt "$SWAP_PARTITION_SIZE_IN_BYTES_MIN" ]; then
+		echo "$SWAP_PARTITION_SIZE has smaller size than required (the minimum size is $SWAP_PARTITION_SIZE_IN_BYTES_MIN B)!"
+		echo "Aborting..."
+		exit 12
+	fi
+	echo "Check complete"
+fi
+
+SWAP_PARTITION_SHORT=`lsblk -lnbo NAME $SWAP_PARTITION`
+SWAP_PARTITION_UUID=`blkid -s UUID -o value $SWAP_PARTITION`
+
+#Try to determine target partition
+if [ -z $UPGRADE_PARTITION ]; then
+	echo "Looking up for target partition..."
+	if [ -z $ACTIVE_PARTITION_SHORT ]; then
+		echo "Automatic detection of upgrade partition failed! Unable to detect active partition."
+		echo "Aborting..."
+		exit 13
+	fi
+	if [ -z $BOOT_PARTITION_SHORT ]; then
+		echo "Automatic detection of upgrade partition failed! Unable to detect boot partition."
+		echo "Aborting..."
+		exit 13
+	fi
+	if [ -z $SWAP_PARTITION_SHORT ]; then
+		echo "Automatic detection of upgrade partition failed! Unable to detect swap partition."
+		echo "Aborting..."
+		exit 13
+	fi
+	if [ -z $DISK_SHORT ]; then
+		echo "Automatic detection of upgrade partition failed! Unable to detect active disk."
+		echo "Aborting..."
+		exit 13
+	fi
+	GREP_PARAM="$ACTIVE_PARTITION_SHORT\|$BOOT_PARTITION_SHORT\|$SWAP_PARTITION_SHORT\|$DISK_SHORT"
+	if [ ! -z $EXTENDED_PARTITION ]; then
+		while read -r ext_partition; do
+			EXTENDED_PARTITION_SHORT=`lsblk -lnbo NAME $ext_partition`
+			GREP_PARAM="$GREP_PARAM\|$EXTENDED_PARTITION_SHORT"
+		done <<< "$EXTENDED_PARTITION"
+	fi
+
+	UPGRADE_PARTITION=`lsblk -lnbo NAME,SIZE $DISK | grep -wv "$GREP_PARAM" | sort -k1 | awk '$2 >= "$RCPM_PARTITION_SIZE_IN_BYTES_MIN"' | head -n 1 | awk {'print $1'}`
+	UPGRADE_PARTITION=`find /dev/ -name "$UPGRADE_PARTITION"`
+
+else
+	echo "Checking target partition passed with -t parameter: $UPGRADE_PARTITION"
+	if [ ! -e $UPGRADE_PARTITION ]; then
+		echo "$UPGRADE_PARTITION does not exists!"
+		echo "Aborting..."
+		exit 12
+	fi
+
+	if [[ "$UPGRADE_PARTITION" == "$ACTIVE_PARTITION" ]]; then
+		echo "$UPGRADE_PARTITION is the same as active partition!"
+		echo "Aborting..."
+		exit 12
+
+	fi
+
+	if [[ "$UPGRADE_PARTITION" == "$BOOT_PARTITION" ]]; then
+		echo "$UPGRADE_PARTITION is the same as boot partition!"
+		echo "Aborting..."
+		exit 12
+
+	fi
+
+	if [[ "$UPGRADE_PARTITION" == "$SWAP_PARTITION" ]]; then
+		echo "$UPGRADE_PARTITION is the same as swap partition!"
+		echo "Aborting..."
+		exit 12
+
+	fi
+
+	UPGRADE_PARTITION_SIZE=`lsblk -lnbo SIZE $UPGRADE_PARTITION`
+	if [ "$UPGRADE_PARTITION_SIZE" -lt "$RCPM_PARTITION_SIZE_IN_BYTES_MIN" ]; then
+		echo "$UPGRADE_PARTITION has smaller size than required (the minimum size is $RCPM_PARTITION_SIZE_IN_BYTES_MIN B) !"
+		echo "Aborting..."
+		exit 12
+	fi
+	echo "Check complete"
+fi
+
+if [ -z $ACTIVE_PARTITION ]; then
+	echo "Could not determine active partition. Aborting update." 1>&2
+	exit 11
+fi
+
+if [ -z $UPGRADE_PARTITION ]; then
+	echo "Could not determine target partition. Aborting update." 1>&2
+	exit 11
+fi
+
+if [ -z $SWAP_PARTITION ]; then
+	echo "Could not determine swap partition. Aborting update." 1>&2
+	exit 11
+fi
+
+echo "All required partitions found:"
+echo "Active partition: $ACTIVE_PARTITION"
+echo "Target partition: $UPGRADE_PARTITION"
+echo "Swap partition: $SWAP_PARTITION"
+
+#Make sure a directory exists to mount UPGRADE_PARTITION_MOUNTPOINT and mount it.
+if ! mkdir -p $UPGRADE_PARTITION_MOUNTPOINT; then
+	echo "Cannot create mountpoint at $UPGRADE_PARTITION_MOUNTPOINT. Returned code: $MKDIR_OUT" 1>&2
+	echo "Aborting..." 1>&2
+	unmountDevicesAndRemoveDirectories
+	exit 20
+fi;
+if ! mkdir -p $BOOT_PARTITION_MOUNTPOINT; then
+	echo "Cannot create mountpoint at $BOOT_PARTITION_MOUNTPOINT. Returned code: $MKDIR_OUT" 1>&2
+	echo "Aborting..." 1>&2
+	unmountDevicesAndRemoveDirectories
+	exit 20
+fi
+
+echo "Initialization complete."
+echo "Beginning RCPM update..."
+echo ""
+
+#Show warning message
+showWarningMessage
+
+#Wipe the target filesystem and get new UUID
+echo "Formatting target partition..."
+if ! mkfs.ext4 $UPGRADE_PARTITION > /dev/null 2>&1; then
+	echo "Cannot format target partition. Returned code: $?" 1>&2
+	echo "Aborting..." 1>&2
+	unmountDevicesAndRemoveDirectories
+	exit 21
+fi
+
+echo "Format complete."
+
+UPGRADE_PARTITION_UUID=`blkid -s UUID -o value $UPGRADE_PARTITION`
+
+echo "Mounting all required partitions..."
+if ! mount $UPGRADE_PARTITION $UPGRADE_PARTITION_MOUNTPOINT  > /dev/null 2>&1; then
+	echo "Unable to mount upgrade partition. Returned code: $?" 1>&2
+	echo "Aborting..." 1>&2
+	unmountDevicesAndRemoveDirectories
+	exit 22
+fi
+if ! mount $BOOT_PARTITION $BOOT_PARTITION_MOUNTPOINT  > /dev/null 2>&1; then
+	echo "Unable to mount boot partition. Returned code: $?" 1>&2
+	echo "Aborting..." 1>&2
+	unmountDevicesAndRemoveDirectories
+	exit 22
+fi
+echo "Mounting succeeded."
+
+#Make sure we can mount the partition
+echo "Extracting files to upgrade partition..."
+if tar --same-owner --acls -xpzf $UPDATE_FILE -C $UPGRADE_PARTITION_MOUNTPOINT > /dev/null; then
+	echo "Extraction successful."
+else
+	echo "Couldn't extract image, aborting upgrade." 1>&2
+	unmountDevicesAndRemoveDirectories
+	exit 23
+fi
+
+#Check extracted tarball
+checkExtractedTarball
+
+echo "Recreating directories..."
+#Recreate directories on target partition
+recreateDirectories
+
+echo "Generating new fstab file for upgraded RCPM..."
+#Generate a new /etc/fstab file
+createFstabFile
+
+echo "Generating new GRUB2 configuration..."
+#Generate new GRUB file
+generateGrub
+
+#Add execution of upgrade script
+addAfterUpgradeScript
+
+echo "Removing all leftovers..."
+#Unmount directories and remove created directories
+unmountDevicesAndRemoveDirectories
+
+echo "Upgrade complete! Rebooting."
+sleep 5
+reboot
