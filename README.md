@@ -29,7 +29,7 @@ Here is one example configuration (you don't have to do it this way)
 
 10)	Provide feedback by clicking the 'Issues' link in this GitHub repo. 
 
-********************************************************DISLCAIMER*********************************************************
+********************************************************DISCLAIMER*********************************************************
 
 This code is reference software only and is not feature complete. It should not be used in commercial products at this time. Intel makes no claims for the quality or completeness of this code.
 ***************************************************************************************************************************
