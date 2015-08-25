@@ -80,12 +80,14 @@ AgentManager::AgentsList AgentManager::get_agents_by_capability(
                                             const std::string& capability) {
     std::lock_guard<std::mutex> lock{m_mutex};
 
+    auto checker = [&capability](const AgentSharedPtr& agent) {
+                       return agent->has_capability(capability);
+                   };
     AgentsList agents;
-    for (const auto& agent : m_agents) {
-        if (agent->has_capability(capability)) {
-            agents.push_back(agent);
-        }
-    }
+
+    std::copy_if(m_agents.cbegin(), m_agents.cend(), std::back_inserter(agents),
+                 checker);
+
     return agents;
 }
 
