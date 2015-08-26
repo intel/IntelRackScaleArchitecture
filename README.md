@@ -1,5 +1,8 @@
 Intel ® Rack Scale Architecture Reference Software – Getting Started guide 
  
+NOTE ON PULL REQUESTS:
+We are not upstreaming contributions to the master branch just yet. There are plans for this in the future. Once the process is established we will post information on this.
+
 This ‘Getting Started’ guide is a good starting point for developers who are ready to start working with Intel ® Rack Scale Architecture Software. For details on Intel ® Rack Scale Architecture, please visit http://01.org/intelrackscalearchitecture or http://intel.com/intelrackscalearchitecture. It is recommended you read the entire document before getting started. Keep in mind this code is reference software only. It is expected developers will take this reference software and make it their own. Look for more releases in the future! Enjoy!
 
 PLEASE READ: Documentation referenced in each of the steps below can be found on http://www.intel.com/content/www/us/en/architecture-and-technology/rack-scale-architecture/intel-rack-scale-architecture-resources.html. Note that the Rack Management Module (RMM) code is coming soon, so any references to this aren't implemented at this time!
