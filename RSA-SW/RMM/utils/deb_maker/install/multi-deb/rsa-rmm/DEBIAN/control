@@ -1,0 +1,8 @@
+Package: rsa-rmm
+Version: 
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: rsa-rmm-base
+Maintainer: guanglin.shen <guanglingx.shen@intel.com>
+Description: rsa-rmm application/API

@@ -1,0 +1,238 @@
+{
+	"Oem": {
+		"Test123ID":{ "Type": "Oem123abc123.987.876.543"},
+		"Test456ID": {"Type": "Oem123abc123.987.876.678"}
+	},
+	"Name": "test project",
+	"Modified": "1996-12-19T16:39:57-08:00",
+	"Type":         "TypeTestSam.1237.876.543",
+	"Language":     "en_US",
+	"Description":  "description test string",
+	"RegistryPrefix": "rsa_rmm",
+	"Version":      "1.0.1",
+	"OwningEntity": "Intel",
+	"Messages": {
+		"MSGRackChange": {
+			"Description":  "Evt/Log: Rack Status Change",
+			"Message":      "Rack status change [%string]\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGRackUpdate": {
+			"Description":  "Log: Rack Info Update",
+			"Message":      "Rack updated [%string].\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGPsuChange": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: PSU Status Change",
+			"Message":      "PSU [%string] status change [%string].\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 2,
+			"ParamTypes":   ["string", "string"]
+		},
+		"MSGPsuUpdate": {
+			"_ArgPos": 0,
+			"Description":  "Log: PSU Info Update",
+			"Message":      "PSU [%string] updated.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGPsuAdd": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: PSU Add",
+			"Message":      "PSU [%string] add.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGPsuRemove": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: PSU Remove",
+			"Message":      "PSU [%string] Remove.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGFanChange": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: FAN Status Change",
+			"Message":      "FAN [%string] status change [%string].\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 2,
+			"ParamTypes":   ["string", "string"]
+		},
+		"MSGFanUpdate": {
+			"_ArgPos": 0,
+			"Description":  "Log: FAN Info Update",
+			"Message":      "FAN [%string] updated.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGFanAdd": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: FAN Add",
+			"Message":      "FAN [%string] add.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGFanRemove": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: FAN Remove",
+			"Message":      "FAN [%string] Remove.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGMbpChange": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: MBP Status Change",
+			"Message":      "MBP [%string] status change [%string].\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 2,
+			"ParamTypes":   ["string", "string"]
+		},
+		"MSGMbpUpdate": {
+			"_ArgPos": 0,
+			"Description":  "Log: MBP Info update",
+			"Message":      "MBP [%string] updated.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGMbpAdd": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: MBP Add",
+			"Message":      "MBP [%string] add.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGMbpRemove": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: MBP Remove",
+			"Message":      "MBP [%string] Remove.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGDrawerChange": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: Drawer Status Change",
+			"Message":      "Drawer [%string] status change [%string].\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 2,
+			"ParamTypes":   ["string", "string"]
+		},
+		"MSGDrawerUpdate": {
+			"_ArgPos": 0,
+			"Description":  "Log: Drawer update",
+			"Message":      "Drawer [%string] updated.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGDrawerAdd": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: Drawer Add",
+			"Message":      "Drawer [%string] add\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGDrawerRemove": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: Drawer Remove",
+			"Message":      "Drawer [%string] Remove.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGDrawerAlert": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: Drawer Alert",
+			"Message":      "Drawer [%string] Alert.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGPZoneUpdate": {
+			"_ArgPos": 0,
+			"Description":  "Log: Power Zone Info update",
+			"Message":      "Power Zone [%string] updated.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGPZoneAdd": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log Power Zone Add",
+			"Message":      "Power Zone [%string] add.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGPZoneRemove": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: Power Zone Remove",
+			"Message":      "Power Zone [%string] Remove.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGTZoneUpdate": {
+			"_ArgPos": 0,
+			"Description":  "Log: Cooling Zone Info update",
+			"Message":      "Cooling Zone [%string] updated.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGTZoneAdd": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: Cooling Zone Add",
+			"Message":      "Cooling Zone [%string] add.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGTZoneRemove": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: Cooling Zone Remove",
+			"Message":      "Cooling Zone [%string] Remove.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGDZoneUpdate": {
+			"_ArgPos": 0,
+			"Description":  "Log: Drawer Zone Info update",
+			"Message":      "Drawer Zone [%string] updated.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGDZoneAdd": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: Drawer Zone Add",
+			"Message":      "Drawer Zone [%string] add.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		},
+		"MSGDZoneRemove": {
+			"_ArgPos": 0,
+			"Description":  "Evt/Log: Drawer Zone Remove",
+			"Message":      "Drawer Zone [%string] Remove.\n",
+			"Severity":     "OK",
+			"NumberOfArgs": 1,
+			"ParamTypes":   ["string"]
+		}
+	}
+}
