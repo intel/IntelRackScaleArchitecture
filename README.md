@@ -1,3 +1,2 @@
-
-
-#This repository is retired! Please visit http://github/01org/IntelRSD for new Intel(r) Rack Scale Design repository!
+# This repository is retired!
+Please visit https://github.com/01org/IntelRSD for new Intel® Rack Scale Design repository!
